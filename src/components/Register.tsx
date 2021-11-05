@@ -1,7 +1,12 @@
 import { ChangeEvent, useState } from 'react'
 import api from '../routes/routes'
+import validateEmail from '../utils/eMailValidator'
+import validateTelephone from '../utils/telephoneNumberValidator'
+import cpfValidator from '../utils/cpfValidator'
+
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import validateCpf from '../utils/cpfValidator'
 
 interface IFields {
   name: string
@@ -13,14 +18,50 @@ interface IFields {
 
 export default function Register() {
   const [fields, setFields] = useState<IFields>({} as IFields)
+  const idToastFields = 'idToastFields'
+  const idToastValidEmail = 'idToastValidEmail'
+  const idSuccesPost = 'idSuccesPost'
+  const idToastValidCpf = 'idToastValidCpf'
 
   async function saveUser() {
-    const customId = 'custom-id-yes'
+
 
     if (!fields.name || !fields.password || !fields.eMail || !fields.cpf) {
-
       toast.error('Preencha todos os campos obrigatórios', {
-        toastId: customId,
+        toastId: idToastFields,
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined
+      })
+    } else if (!validateEmail(fields.eMail)) {
+      toast.error('Insira um e-mail válido', {
+        toastId: idToastValidEmail,
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined
+      })
+    } else if (fields.telephone && !validateTelephone(fields.telephone)) {
+      toast.error('Insira um telefone válido', {
+        toastId: idToastValidEmail,
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined
+      })
+    }  else if (!validateCpf(fields.cpf)) {
+      toast.error('Insira um cpf válido', {
+        toastId: idToastValidCpf,
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -30,10 +71,9 @@ export default function Register() {
         progress: undefined
       })
     } else {
-      
       await api.post('/users', fields)
       toast.success('Usuário criado com sucesso', {
-        toastId: customId,
+        toastId: idSuccesPost,
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -42,7 +82,6 @@ export default function Register() {
         draggable: false,
         progress: undefined
       })
-      console.log('sai')
     }
   }
 
@@ -93,6 +132,7 @@ export default function Register() {
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setFields({ ...fields, cpf: event.target.value })
           }
+          
         />
         <p>Telefone</p>
         <input
