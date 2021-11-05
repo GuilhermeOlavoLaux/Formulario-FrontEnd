@@ -1,5 +1,7 @@
 import { ChangeEvent, useState } from 'react'
-// const emailRegex = require('../utils/validators')
+import api from '../routes/routes'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 interface IFields {
   name: string
@@ -12,8 +14,53 @@ interface IFields {
 export default function Register() {
   const [fields, setFields] = useState<IFields>({} as IFields)
 
+  async function saveUser() {
+    const customId = 'custom-id-yes'
+
+    if (!fields.name || !fields.password || !fields.eMail || !fields.cpf) {
+
+      toast.error('Preencha todos os campos obrigatórios', {
+        toastId: customId,
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined
+      })
+    } else {
+      
+      await api.post('/users', fields)
+      toast.success('Usuário criado com sucesso', {
+        toastId: customId,
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined
+      })
+      console.log('sai')
+    }
+  }
+
   return (
     <div className='form'>
+      <ToastContainer
+        position='top-right'
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <ToastContainer />
+
       <div className='form-container'>
         <h1>Cadastro</h1>
         <p>Nome</p>
@@ -55,7 +102,7 @@ export default function Register() {
           }
         />
 
-        <button>Cadastrar</button>
+        <button onClick={saveUser}>Cadastrar</button>
       </div>
     </div>
   )
