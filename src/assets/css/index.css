@@ -33,7 +33,7 @@
 
 .form h1 {
   text-align: center;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0rem;
   color: #35359b;
 }
 
@@ -56,6 +56,13 @@
   border: none;
   color: white;
   border-radius: 0.6rem;
+}
+
+.form .advice {
+  color: red;
+  margin-top: 5px;
+  font-size: 0.6rem;
+  display: none;
 }
 
 :root {

@@ -19,7 +19,7 @@ $blue-500: rgb(53, 53, 155);
 
   h1 {
     text-align: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0rem;
     color: $blue-500;
   }
 
@@ -43,5 +43,12 @@ $blue-500: rgb(53, 53, 155);
     color: white;
 
     border-radius: 0.6rem;
+  }
+
+  .advice {
+    color: red;
+    margin-top: 5px;
+    font-size: 0.6rem;
+    display: none;
   }
 }
