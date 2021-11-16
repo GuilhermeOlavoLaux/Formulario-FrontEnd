@@ -14,86 +14,71 @@ interface IFields {
   telephone: string
 }
 
+interface IToastConfig {
+  toastId: string
+  position: any
+  autoClose: number
+  hideProgressBar: boolean
+  closeOnClick: boolean
+  pauseOnHover: boolean
+  draggable: boolean
+  progress: any
+}
+
 export default function Register() {
   const [fields, setFields] = useState<IFields>({} as IFields)
-
-  //toast ids
-  const idToastFields = 'idToastFields'
-  const idToastValidEmail = 'idToastValidEmail'
-  const idSuccesPost = 'idSuccesPost'
-  const idToastValidCpf = 'idToastValidCpf'
 
   const emailAdvice = window.document.getElementById('emailAdvice')
   const telephoneAdvice = window.document.getElementById('telephoneAdvice')
   const cpfAdvice = window.document.getElementById('cpfAdvice')
 
-  async function saveUser() {
+  function getToastConfig(id: string): IToastConfig {
+    return {
+      toastId: id,
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined
+    }
+  }
+
+  function validateAll() {
     if (!fields.name || !fields.password || !fields.eMail || !fields.cpf) {
-      toast.error('Preencha todos os campos obrigatórios', {
-        toastId: idToastFields,
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined
-      })
+      toast.error('Preencha todos os campos obrigatórios', getToastConfig('idToastFields'))
+      return false
     } else if (!validateEmail(fields.eMail)) {
-      toast.error('Insira um e-mail válido', {
-        toastId: idToastValidEmail,
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined
-      })
+      toast.error('Insira um e-mail válido', getToastConfig('idToastValidEmail'))
 
       if (emailAdvice !== null) {
         emailAdvice.style.display = 'block'
       }
+      return false
     } else if (!validateCpf(fields.cpf)) {
-      toast.error('Insira um cpf válido', {
-        toastId: idToastValidCpf,
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined
-      })
+      toast.error('Insira um cpf válido', getToastConfig('idToastValidCpf'))
       if (cpfAdvice !== null) {
         cpfAdvice.style.display = 'block'
       }
+      return false
     } else if (fields.telephone && !validateTelephone(fields.telephone)) {
-      toast.error('Insira um telefone válido', {
-        toastId: idToastValidEmail,
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined
-      })
+      toast.error('Insira um telefone válido', {})
       if (telephoneAdvice !== null) {
         telephoneAdvice.style.display = 'block'
       }
+      return false
     } else {
+      return true
+    }
+  }
+
+  async function saveUser() {
+    if (validateAll()) {
+      console.log('postei')
       await api.post('/users', fields)
-      toast.success('Usuário criado com sucesso', {
-        toastId: idSuccesPost,
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined
-      })
+      toast.success('Usuário criado com sucesso', getToastConfig('idSuccesPost'))
+
       //@ts-ignore
       telephoneAdvice.style.display = 'none'
       //@ts-ignore
@@ -103,14 +88,6 @@ export default function Register() {
       //@ts-ignore
       document.getElementById('nameInput').value = ''
 
-      //@ts-ignore
-      document.getElementById('passwordInput').value = ''
-      //@ts-ignore
-      document.getElementById('emailInput').value = ''
-      //@ts-ignore
-      document.getElementById('cpfInput').value = ''
-      //@ts-ignore
-      document.getElementById('telephoneInput').value = ''
       setFields({ name: '', password: '', eMail: '', cpf: '', telephone: '' })
     }
   }
@@ -135,6 +112,7 @@ export default function Register() {
         <p>Nome</p>
         <input
           type='text'
+          value={fields.name}
           id='nameInput'
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setFields({ ...fields, name: event.target.value })
@@ -144,6 +122,7 @@ export default function Register() {
         <p>Senha</p>
         <input
           type='password'
+          value={fields.password}
           id='passwordInput'
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setFields({ ...fields, password: event.target.value })
@@ -153,6 +132,7 @@ export default function Register() {
         <p>E-mail</p>
         <input
           type='text'
+          value={fields.eMail}
           id='emailInput'
           className='email-field'
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -166,6 +146,7 @@ export default function Register() {
         <p>CPF</p>
         <input
           type='text'
+          value={fields.cpf}
           id='cpfInput'
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setFields({ ...fields, cpf: event.target.value })
@@ -178,6 +159,7 @@ export default function Register() {
         <p>Telefone</p>
         <input
           type='text'
+          value={fields.telephone}
           id='telephoneInput'
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             setFields({ ...fields, telephone: event.target.value })
