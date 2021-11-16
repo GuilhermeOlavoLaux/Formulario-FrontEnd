@@ -28,9 +28,9 @@ interface IToastConfig {
 export default function Register() {
   const [fields, setFields] = useState<IFields>({} as IFields)
 
-  const emailAdvice = window.document.getElementById('emailAdvice')
-  const telephoneAdvice = window.document.getElementById('telephoneAdvice')
-  const cpfAdvice = window.document.getElementById('cpfAdvice')
+  const [emailFlag, setEmailFlag] = useState(false)
+  const [telephoneFlag, setTelephoneFlag] = useState(false)
+  const [cpfFlag, setCpfFlag] = useState(false)
 
   function getToastConfig(id: string): IToastConfig {
     return {
@@ -51,22 +51,15 @@ export default function Register() {
       return false
     } else if (!validateEmail(fields.eMail)) {
       toast.error('Insira um e-mail válido', getToastConfig('idToastValidEmail'))
-
-      if (emailAdvice !== null) {
-        emailAdvice.style.display = 'block'
-      }
+      setEmailFlag(true)
       return false
     } else if (!validateCpf(fields.cpf)) {
       toast.error('Insira um cpf válido', getToastConfig('idToastValidCpf'))
-      if (cpfAdvice !== null) {
-        cpfAdvice.style.display = 'block'
-      }
+      setCpfFlag(true)
       return false
     } else if (fields.telephone && !validateTelephone(fields.telephone)) {
       toast.error('Insira um telefone válido', {})
-      if (telephoneAdvice !== null) {
-        telephoneAdvice.style.display = 'block'
-      }
+      setTelephoneFlag(true)
       return false
     } else {
       return true
@@ -78,16 +71,9 @@ export default function Register() {
       console.log('postei')
       await api.post('/users', fields)
       toast.success('Usuário criado com sucesso', getToastConfig('idSuccesPost'))
-
-      //@ts-ignore
-      telephoneAdvice.style.display = 'none'
-      //@ts-ignore
-      cpfAdvice.style.display = 'none'
-      //@ts-ignore
-      emailAdvice.style.display = 'none'
-      //@ts-ignore
-      document.getElementById('nameInput').value = ''
-
+      setEmailFlag(false)
+      setTelephoneFlag(false)
+      setCpfFlag(false)
       setFields({ name: '', password: '', eMail: '', cpf: '', telephone: '' })
     }
   }
@@ -139,7 +125,11 @@ export default function Register() {
             setFields({ ...fields, eMail: event.target.value })
           }
         />
-        <p className='advice' id='emailAdvice'>
+        <p
+          className='advice'
+          id='emailAdvice'
+          style={emailFlag ? { display: 'block' } : { display: 'none' }}
+        >
           *Utilize o seguinte formato: email@email.com
         </p>
 
@@ -152,7 +142,11 @@ export default function Register() {
             setFields({ ...fields, cpf: event.target.value })
           }
         />
-        <p className='advice' id='cpfAdvice'>
+        <p
+          className='advice'
+          id='cpfAdvice'
+          style={cpfFlag ? { display: 'block' } : { display: 'none' }}
+        >
           *Utilize o seguinte formato: 000.000.000-00
         </p>
 
@@ -165,8 +159,11 @@ export default function Register() {
             setFields({ ...fields, telephone: event.target.value })
           }
         />
-
-        <p className='advice advice-telephone' id='telephoneAdvice'>
+        <p
+          className='advice advice-telephone'
+          id='telephoneAdvice'
+          style={telephoneFlag ? { display: 'block' } : { display: 'none' }}
+        >
           *Utilize o seguinte formato: (51)99999-9999
         </p>
 
